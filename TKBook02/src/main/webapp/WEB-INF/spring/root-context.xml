@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+	
+	<context:component-scan base-package="kr.bit.service" /><!-- 서비스 패키지의 것들을 메모리에 올리기 위해서 -->
+	
+	<!-- Root Context: defines shared resources visible to all other web components -->
+		<bean id="HikariConfig" class="com.zaxxer.hikari.HikariConfig"> <!-- HikariConfig 객체 생성 id는 자유인듯-->
+		<!-- property의 역할은 setter메서드가 실행되는 것과 같다 name 틀려선 안됨 -->
+			<property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
+			<property name="jdbcUrl" value="jdbc:mysql://localhost:3306/gusams?serverTimezone=UTC"/>
+			<property name="username" value="portfolio"/>
+			<property name="password" value="portfolio2!"/>
+		</bean>
+		<!-- 이 클래스가 커넥션 풀도 만들고 커넥션을 사용도하고 반납함 destroy-method="close" 반납하기 위해서 사용-->
+		<bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+			<constructor-arg ref="HikariConfig"/> <!-- HikariDataSource가 HikariConfig를 필요로 해서 참조  -->
+		</bean>									  <!-- 생성자 객체에 arg로 들어와야해서 constructor-arg 태그를 사용 반면 아래의 SqlSessionFactoryBean는 세터로 사용(DI) -->
+		<!-- mybatis-spring-1.3.2.jar에서 ▼마이바티스를 연결하기 위해서 필요한 클래스 -->
+		<bean class="org.mybatis.spring.SqlSessionFactoryBean"><!-- 매퍼 인터페이스를 구현해 놓은 세션팩토리를 통해서 매퍼.xml이 실행되는 것 -->
+       <property name="dataSource" ref="dataSource" /><!-- 커넥션을 가져다 쓰기위해서 참조 --> <!-- 이 클래스 안에 dataSource라는 변수가 있겠죵? -->
+    </bean>
+    <!-- SqlSessionFactoryBean은 이후에 매퍼하고 연결되어있어야 하므로 매퍼 인터페이스를 메모리에 올리는 작업을 해야함 인터페이스를 부모로 구현체 관계가 되어야 하므로-->
+		
+	<mybatis-spring:scan base-package="kr.bit.mapper"/>
+	<!-- 그리고 스캔을 하려면 mybatis spring이라는 네임스페이스가 필요하므로 추가를 해준다 -->
+	
+	
+		
+</beans>
