@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.bit.mapper.PointMemberMapper">
+
+	<insert id="insertPoint" parameterType="kr.bit.entity.entity">
+		insert into Point(road, jibun, x, y) values(#{road},#{jibun},#{x},#{y});
+	</insert>
+	<select id ="selectPoint" resultType="kr.bit.entity.entity">
+	    select * from Point ORDER BY today DESC LIMIT 10;	
+	</select>
+	
+	<select id ="selectPusan" resultType="kr.bit.entity.busan">
+		select administra, facilitynm, lng, lat from pp;
+	</select>
+	
+</mapper>
